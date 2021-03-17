@@ -2,27 +2,24 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const axios = require("axios");
-// const redditData = require("./data.json");
-
-// app.use(express.static(path.join(__dirname, "public")));
+const fs = require("fs");
+const { nextTick } = require("process");
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-async function getData() {
-  try {
-    const response = await axios.get(
-      "https://jsonplaceholder.typicode.com/photos"
-    );
-    console.log(response);
-  } catch (error) {
-    console.error(error);
-  }
-}
+app.get("/", async (req, res, next) => {
+  const data = fs.readFile("generated.json", "utf8", function (err, data) {
+    if (err) {
+      return next(err);
+    }
+    const json = JSON.parse(data);
+    // json.map((el) => console.log("element"));
+    // console.log(JSON.parse(data));
 
-app.get("/", (req, res) => {
-  getData();
-  res.render("home");
+    res.render("home", { json });
+  });
+  //   console.log(data);
 });
 
 app.listen(3000, () => {

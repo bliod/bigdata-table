@@ -5,8 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
   </head>
-
+  <style>
+    table,
+    th,
+    td {
+      border: 1px solid black;
+      border-collapse: collapse;
+    }
+  </style>
   <body>
-    <h1>The Home Page <%= 'hello world'.toUpperCase() %></h1>
+    <h1>The Table</h1>
+    <h5>Last selected value :</h5>
+    <div>
+      <div>
+        <button id="backwards"><<</button>
+        <button id="prev">prev</button>
+        <div class="pagenumbers" id="pagination"></div>
+        <button id="next">next</button>
+        <button id="forwards">>></button>
+      </div>
+
+      <table id="table" style="width: 100%"></table>
+    </div>
   </body>
+
+  <script type="text/javascript">
+    const data = <%-JSON.stringify(json)%>;
+    const list_element = document.getElementById("table");
+    const pagination_element = document.getElementById("pagination");
+
+    let current_page = 1;
+    let rows = 20;
+
+    function DisplayList(items, wrapper, rows_per_page, page) {
+      wrapper.innerHTML = "";
+      page--;
+
+      let start = rows_per_page * page;
+      let end = start + rows_per_page;
+      let paginatedItems = items.slice(start, end);
+
+      console.log(paginatedItems, "paginatedItems");
+      let column = document.createElement("tr");
+
+      let columnId = document.createElement("th");
+      columnId.innerText = "ID";
+      let columnName = document.createElement("th");
+      columnName.innerText = "Name";
+      let columnAge = document.createElement("th");
+      columnAge.innerText = "Age";
+      let columnBalance = document.createElement("th");
+      columnBalance.innerText = "Balance";
+
+      column.append(columnId, columnName, columnAge, columnBalance);
+      wrapper.appendChild(column);
+
+      for (let i = 0; i < paginatedItems.length; i++) {
+        let item_element = document.createElement("tr");
+        let thName = document.createElement("th");
+        let thId = document.createElement("th");
+        let thAge = document.createElement("th");
+        let thBalance = document.createElement("th");
+
+        thName.innerText = paginatedItems[i].name;
+        thId.innerText = paginatedItems[i]._id;
+        thAge.innerText = paginatedItems[i].age;
+        thBalance.innerText = paginatedItems[i].balance;
+
+        item_element.append(thId, thName, thAge, thBalance);
+        wrapper.appendChild(item_element);
+      }
+    }
+
+    function SetupPagination(items, wrapper, rows_per_page) {
+      let backwards = document.getElementById("backwards");
+      let forwards = document.getElementById("forwards");
+      let btnCount = 1;
+
+      let page_count = Math.ceil(items.length / rows_per_page);
+
+      forwards.addEventListener("click", () => {
+        console.log(btnCount,'btnCount')
+          if (btnCount+10 > page_count) { //Dont add more that available page count
+            return
+          }
+          btnCount += 10;
+        wrapper.innerHTML = "";
+        for (let i = btnCount; i < btnCount + 10; i++) {
+            if(i<=page_count){  //Append only till page count
+                let btn = PaginationButton(i, items);
+                 wrapper.appendChild(btn);
+            }
+
+          }
+      });
+      backwards.addEventListener("click", () => {
+        btnCount -= 10;
+        wrapper.innerHTML = "";
+        if (btnCount < 0) {
+          btnCount = 1;
+        }
+        for (let i = btnCount; i < btnCount + 10; i++) {
+          let btn = PaginationButton(i, items);
+          wrapper.appendChild(btn);
+        }
+      });
+      for (let i = btnCount; i < btnCount + 10; i++) {
+        let btn = PaginationButton(i, items);
+
+        wrapper.appendChild(btn);
+      }
+    }
+
+    function PaginationButton(page, items) {
+      let button = document.createElement("button");
+      let prev = document.getElementById("prev");
+      let next = document.getElementById("next");
+      button.innerText = page;
+
+      if (current_page == page) button.classList.add("active");
+
+      prev.addEventListener("click", () => {
+        DisplayList(items, list_element, rows, current_page - 1);
+      });
+      next.addEventListener("click", () => {
+        DisplayList(items, list_element, rows, current_page + 1);
+      });
+
+      button.addEventListener("click", function () {
+        current_page = page;
+        DisplayList(items, list_element, rows, current_page);
+
+        let current_btn = document.querySelector(".pagenumbers button.active");
+        current_btn.classList.remove("active");
+
+        button.classList.add("active");
+      });
+
+      return button;
+    }
+
+    DisplayList(data, list_element, rows, current_page);
+    SetupPagination(data, pagination_element, rows);
+  </script>
 </html>

@@ -12,6 +12,9 @@
       border: 1px solid black;
       border-collapse: collapse;
     }
+    .active {
+      background-color: lightblue;
+    }
   </style>
   <body>
     <h1>The Table</h1>
@@ -45,7 +48,7 @@
       let end = start + rows_per_page;
       let paginatedItems = items.slice(start, end);
 
-      console.log(paginatedItems, "paginatedItems");
+      // console.log(paginatedItems, "paginatedItems");
       let column = document.createElement("tr");
 
       let columnId = document.createElement("th");
@@ -80,24 +83,78 @@
     function SetupPagination(items, wrapper, rows_per_page) {
       let backwards = document.getElementById("backwards");
       let forwards = document.getElementById("forwards");
+      let prev = document.getElementById("prev");
+      let next = document.getElementById("next");
       let btnCount = 1;
 
       let page_count = Math.ceil(items.length / rows_per_page);
 
-      forwards.addEventListener("click", () => {
-        console.log(btnCount,'btnCount')
-          if (btnCount+10 > page_count) { //Dont add more that available page count
-            return
+      prev.addEventListener("click", () => {
+        //update class button
+        if (current_page > 1) {
+          let removeCurrent = document.getElementById(`btn${current_page}`);
+          removeCurrent.classList.remove("active");
+
+          current_page -= 1;
+          DisplayList(items, list_element, rows, current_page);
+
+          console.log(current_page, btnCount);
+          if (current_page < btnCount) {
+            btnCount -= 10;
+            wrapper.innerHTML = "";
+            if (btnCount < 0) {
+              btnCount = 1;
+            }
+            for (let i = btnCount; i < btnCount + 10; i++) {
+              let btn = PaginationButton(i, items);
+              wrapper.appendChild(btn);
+            }
           }
-          btnCount += 10;
+          let addPrev = document.getElementById(`btn${current_page}`);
+          addPrev.classList.add("active");
+        }
+      });
+
+      next.addEventListener("click", () => {
+        if (current_page < page_count) {
+          let removeCurrent = document.getElementById(`btn${current_page}`);
+          removeCurrent.classList.remove("active");
+
+          current_page += 1;
+          DisplayList(items, list_element, rows, current_page);
+
+          if (current_page > btnCount + 9) {
+            btnCount += 10;
+            wrapper.innerHTML = "";
+            for (let i = btnCount; i < btnCount + 10; i++) {
+              if (i <= page_count) {
+                //Append only till page count
+                let btn = PaginationButton(i, items);
+                wrapper.appendChild(btn);
+              }
+            }
+          }
+
+          let addNext = document.getElementById(`btn${current_page}`);
+          addNext.classList.add("active");
+        }
+      });
+
+      forwards.addEventListener("click", () => {
+        // console.log(btnCount,'btnCount')
+        if (btnCount + 10 > page_count) {
+          //Dont add more that available page count
+          return;
+        }
+        btnCount += 10;
         wrapper.innerHTML = "";
         for (let i = btnCount; i < btnCount + 10; i++) {
-            if(i<=page_count){  //Append only till page count
-                let btn = PaginationButton(i, items);
-                 wrapper.appendChild(btn);
-            }
-
+          if (i <= page_count) {
+            //Append only till page count
+            let btn = PaginationButton(i, items);
+            wrapper.appendChild(btn);
           }
+        }
       });
       backwards.addEventListener("click", () => {
         btnCount -= 10;
@@ -119,18 +176,11 @@
 
     function PaginationButton(page, items) {
       let button = document.createElement("button");
-      let prev = document.getElementById("prev");
-      let next = document.getElementById("next");
+
       button.innerText = page;
+      button.id = `btn${page}`;
 
       if (current_page == page) button.classList.add("active");
-
-      prev.addEventListener("click", () => {
-        DisplayList(items, list_element, rows, current_page - 1);
-      });
-      next.addEventListener("click", () => {
-        DisplayList(items, list_element, rows, current_page + 1);
-      });
 
       button.addEventListener("click", function () {
         current_page = page;

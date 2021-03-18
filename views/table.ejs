@@ -3,48 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <link rel="stylesheet" href="/app.css" />
+    <script src="/app.js"></script>
+    <script src="/handlers.js"></script>
+    <title>Table</title>
   </head>
-  <style>
-    table,
-    th,
-    td {
-      border: 1px solid black;
-      border-collapse: collapse;
-      cursor: pointer;
-    }
-    td:hover,
-    th:hover {
-      color: darkgray;
-    }
-    td {
-      padding: 0.5rem;
-    }
-    button {
-      padding: 0.5rem;
-      min-width: 3rem;
-      max-height: 3rem;
-    }
-    span {
-      font-weight: normal;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
-    }
-    .pagnation-wrapper {
-      margin-top: 1rem;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-    .active {
-      background-color: lightblue;
-    }
-    .sort {
-      color: lightblue;
-    }
-  </style>
   <body>
     <div class="container">
       <h4>Last selected value : <span id="selection"></span></h4>
@@ -70,60 +33,15 @@
     function DisplayList(items, wrapper, rows_per_page, page) {
       wrapper.innerHTML = "";
       page--;
-
       let start = rows_per_page * page;
       let end = start + rows_per_page;
       let paginatedItems = items.slice(start, end);
+      let headers = document.getElementsByTagName("th");
       let column = document.createElement("tr");
 
-      let columnId = document.createElement("th");
-      columnId.innerText = "ID";
-      columnId.dataset.id = 0;
-      columnId.onclick = (el) => {
-        let headers = document.getElementsByTagName("th");
-        for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove("sort");
-        }
-        el.target.classList.add("sort");
-        sortTable(el.target);
-      };
-      let columnName = document.createElement("th");
-      columnName.innerText = "Name";
-      columnName.dataset.id = 1;
-      columnName.onclick = (el) => {
-        let headers = document.getElementsByTagName("th");
-        for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove("sort");
-        }
-        el.target.classList.add("sort");
-        sortTable(el.target);
-      };
-      let columnAge = document.createElement("th");
-      columnAge.innerText = "Age";
-      columnAge.dataset.id = 2;
-
-      columnAge.onclick = (el) => {
-        let headers = document.getElementsByTagName("th");
-        for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove("sort");
-        }
-        el.target.classList.add("sort");
-        sortTable(el.target);
-      };
-      let columnBalance = document.createElement("th");
-      columnBalance.innerText = "Balance";
-      columnBalance.dataset.id = 3;
-
-      columnBalance.onclick = (el) => {
-        let headers = document.getElementsByTagName("th");
-        for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove("sort");
-        }
-        el.target.classList.add("sort");
-        sortTable(el.target);
-      };
-
-      column.append(columnId, columnName, columnAge, columnBalance);
+      //create table column headers and add to table
+      const headerElements = createHeaders(headers)
+      column.append(...headerElements);
       wrapper.appendChild(column);
 
       for (let i = 0; i < paginatedItems.length; i++) {

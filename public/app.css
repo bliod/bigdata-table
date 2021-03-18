@@ -1,0 +1,38 @@
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  cursor: pointer;
+}
+td:hover,
+th:hover {
+  color: darkgray;
+}
+td {
+  padding: 0.5rem;
+}
+button {
+  padding: 0.5rem;
+  min-width: 3rem;
+  max-height: 3rem;
+}
+span {
+  font-weight: normal;
+}
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+.pagnation-wrapper {
+  margin-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.active {
+  background-color: lightblue;
+}
+.sort {
+  color: lightblue;
+}

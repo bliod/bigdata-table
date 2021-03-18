@@ -11,10 +11,11 @@
     td {
       border: 1px solid black;
       border-collapse: collapse;
-    }
-    th:hover {
       cursor: pointer;
-      color: lightblue;
+    }
+    td:hover,
+    th:hover {
+      color: darkgray;
     }
     .active {
       background-color: lightblue;
@@ -25,7 +26,7 @@
   </style>
   <body>
     <h1>The Table</h1>
-    <h5>Last selected value :</h5>
+    <h5>Last selected value : <span id="selection"></span></h5>
     <div>
       <div>
         <button id="backwards"><<</button>
@@ -41,9 +42,9 @@
 
   <script type="text/javascript">
     const data = <%-JSON.stringify(json)%>;
-    const list_element = document.getElementById("table");
-    const pagination_element = document.getElementById("pagination");
-
+    const listElement = document.getElementById("table");
+    const pagnationElement = document.getElementById("pagination");
+    const selection = document.getElementById("selection");
     let current_page = 1;
     let rows = 20;
 
@@ -54,63 +55,67 @@
       let start = rows_per_page * page;
       let end = start + rows_per_page;
       let paginatedItems = items.slice(start, end);
-
-      // console.log(paginatedItems, "paginatedItems");
       let column = document.createElement("tr");
 
       let columnId = document.createElement("th");
       columnId.innerText = "ID";
       columnId.dataset.id = 0;
-      columnId.onclick = (el)=>{
-        let headers = document.getElementsByTagName('th')
+      columnId.onclick = (el) => {
+        let headers = document.getElementsByTagName("th");
         for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove('sort')
+          headers[index].classList.remove("sort");
         }
-        el.target.classList.add('sort')
-        sortTable(el.target)
-      }
+        el.target.classList.add("sort");
+        sortTable(el.target);
+      };
       let columnName = document.createElement("th");
       columnName.innerText = "Name";
       columnName.dataset.id = 1;
-      columnName.onclick = (el)=>{
-        let headers = document.getElementsByTagName('th')
+      columnName.onclick = (el) => {
+        let headers = document.getElementsByTagName("th");
         for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove('sort')
+          headers[index].classList.remove("sort");
         }
-        el.target.classList.add('sort')
-        sortTable(el.target)
-      }
+        el.target.classList.add("sort");
+        sortTable(el.target);
+      };
       let columnAge = document.createElement("th");
       columnAge.innerText = "Age";
       columnAge.dataset.id = 2;
 
-      columnAge.onclick = (el)=>{
-        let headers = document.getElementsByTagName('th')
+      columnAge.onclick = (el) => {
+        let headers = document.getElementsByTagName("th");
         for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove('sort')
+          headers[index].classList.remove("sort");
         }
-        el.target.classList.add('sort')
-        sortTable(el.target)
-      }
+        el.target.classList.add("sort");
+        sortTable(el.target);
+      };
       let columnBalance = document.createElement("th");
       columnBalance.innerText = "Balance";
       columnBalance.dataset.id = 3;
 
-      columnBalance.onclick = (el)=>{
-        let headers = document.getElementsByTagName('th')
+      columnBalance.onclick = (el) => {
+        let headers = document.getElementsByTagName("th");
         for (let index = 0; index < headers.length; index++) {
-          headers[index].classList.remove('sort')
+          headers[index].classList.remove("sort");
         }
-        el.target.classList.add('sort')
-        sortTable(el.target)
-      }
-
+        el.target.classList.add("sort");
+        sortTable(el.target);
+      };
 
       column.append(columnId, columnName, columnAge, columnBalance);
       wrapper.appendChild(column);
 
       for (let i = 0; i < paginatedItems.length; i++) {
         let item_element = document.createElement("tr");
+        item_element.onclick=((el)=>{
+          for (let index = 0; index < listElement.rows.length; index++) {
+            listElement.rows[index].classList.remove('active')
+           }
+          el.path[1].classList.add('active')
+          selection.innerText = el.target.innerText;
+        })
         let thName = document.createElement("td");
         let thId = document.createElement("td");
         let thAge = document.createElement("td");
@@ -122,6 +127,7 @@
         thBalance.innerText = paginatedItems[i].balance;
 
         item_element.append(thId, thName, thAge, thBalance);
+
         wrapper.appendChild(item_element);
       }
     }
@@ -142,7 +148,7 @@
           removeCurrent.classList.remove("active");
 
           current_page -= 1;
-          DisplayList(items, list_element, rows, current_page);
+          DisplayList(items, listElement, rows, current_page);
 
           console.log(current_page, btnCount);
           if (current_page < btnCount) {
@@ -167,7 +173,7 @@
           removeCurrent.classList.remove("active");
 
           current_page += 1;
-          DisplayList(items, list_element, rows, current_page);
+          DisplayList(items, listElement, rows, current_page);
 
           if (current_page > btnCount + 9) {
             btnCount += 10;
@@ -230,7 +236,7 @@
 
       button.addEventListener("click", function () {
         current_page = page;
-        DisplayList(items, list_element, rows, current_page);
+        DisplayList(items, listElement, rows, current_page);
 
         let current_btn = document.querySelector(".pagenumbers button.active");
         current_btn.classList.remove("active");
@@ -241,8 +247,8 @@
       return button;
     }
 
-    DisplayList(data, list_element, rows, current_page);
-    SetupPagination(data, pagination_element, rows);
+    DisplayList(data, listElement, rows, current_page);
+    SetupPagination(data, pagnationElement, rows);
   </script>
   <script>
     function sortTable(column) {

@@ -44,15 +44,9 @@
       column.append(...headerElements);
       wrapper.appendChild(column);
 
-      for (let i = 0; i < paginatedItems.length; i++) {
+      //create each row items
+      paginatedItems.forEach((el,i)=>{
         let item_element = document.createElement("tr");
-        item_element.onclick=((el)=>{
-          for (let index = 0; index < listElement.rows.length; index++) {
-            listElement.rows[index].classList.remove('active')
-           }
-          el.path[1].classList.add('active')
-          selection.innerText = el.target.innerText;
-        })
         let thName = document.createElement("td");
         let thId = document.createElement("td");
         let thAge = document.createElement("td");
@@ -63,10 +57,12 @@
         thAge.innerText = paginatedItems[i].age;
         thBalance.innerText = paginatedItems[i].balance;
 
+        //add event listener to each row item
+        item_element.onclick=((el)=>handleItemClick(el,listElement))
         item_element.append(thId, thName, thAge, thBalance);
 
         wrapper.appendChild(item_element);
-      }
+      })
     }
 
     function SetupPagination(items, wrapper, rows_per_page) {

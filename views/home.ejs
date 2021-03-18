@@ -12,17 +12,20 @@
       border: 1px solid black;
       border-collapse: collapse;
     }
+    th:hover {
+      cursor: pointer;
+      color: lightblue;
+    }
     .active {
       background-color: lightblue;
+    }
+    .sort {
+      color: lightblue;
     }
   </style>
   <body>
     <h1>The Table</h1>
     <h5>Last selected value :</h5>
-    <p><button onclick="sortTable(1)">Sort name</button></p>
-    <p><button onclick="sortTable(2)">Sort age</button></p>
-    <p><button onclick="sortTable(3)">Sort balance</button></p>
-    <p><button onclick="sortTable(0)">Sort id</button></p>
     <div>
       <div>
         <button id="backwards"><<</button>
@@ -57,12 +60,51 @@
 
       let columnId = document.createElement("th");
       columnId.innerText = "ID";
+      columnId.dataset.id = 0;
+      columnId.onclick = (el)=>{
+        let headers = document.getElementsByTagName('th')
+        for (let index = 0; index < headers.length; index++) {
+          headers[index].classList.remove('sort')
+        }
+        el.target.classList.add('sort')
+        sortTable(el.target)
+      }
       let columnName = document.createElement("th");
       columnName.innerText = "Name";
+      columnName.dataset.id = 1;
+      columnName.onclick = (el)=>{
+        let headers = document.getElementsByTagName('th')
+        for (let index = 0; index < headers.length; index++) {
+          headers[index].classList.remove('sort')
+        }
+        el.target.classList.add('sort')
+        sortTable(el.target)
+      }
       let columnAge = document.createElement("th");
       columnAge.innerText = "Age";
+      columnAge.dataset.id = 2;
+
+      columnAge.onclick = (el)=>{
+        let headers = document.getElementsByTagName('th')
+        for (let index = 0; index < headers.length; index++) {
+          headers[index].classList.remove('sort')
+        }
+        el.target.classList.add('sort')
+        sortTable(el.target)
+      }
       let columnBalance = document.createElement("th");
       columnBalance.innerText = "Balance";
+      columnBalance.dataset.id = 3;
+
+      columnBalance.onclick = (el)=>{
+        let headers = document.getElementsByTagName('th')
+        for (let index = 0; index < headers.length; index++) {
+          headers[index].classList.remove('sort')
+        }
+        el.target.classList.add('sort')
+        sortTable(el.target)
+      }
+
 
       column.append(columnId, columnName, columnAge, columnBalance);
       wrapper.appendChild(column);
@@ -205,45 +247,67 @@
   <script>
     function sortTable(column) {
       let table, rows, switching, i, x, y, shouldSwitch;
+      let isSorted = column.dataset.sorted;
+
       table = document.getElementById("table");
       switching = true;
-      console.log("sort");
       /*Make a loop that will continue until
       no switching has been done:*/
       while (switching) {
         //start by saying: no switching is done:
         switching = false;
         rows = table.rows;
+        // console.log(rows);
         /*Loop through all table rows (except the
         first, which contains table headers):*/
         for (i = 1; i < rows.length - 1; i++) {
+          // console.log(i);
           //start by saying there should be no switching:
           shouldSwitch = false;
           /*Get the two elements you want to compare,
           one from current row and one from the next:*/
-          x = rows[i].getElementsByTagName("TD")[column];
-          y = rows[i + 1].getElementsByTagName("TD")[column];
+          x = rows[i].getElementsByTagName("TD")[column.dataset.id];
+          y = rows[i + 1].getElementsByTagName("TD")[column.dataset.id];
           //check if the two rows should switch place:
-          if (column === 0 || column === 2) {
-            if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
-              //if so, mark as a switch and break the loop:
-              shouldSwitch = true;
-              break;
+          if (isSorted === "true") {
+            if (column.dataset.id == 0 || column.dataset.id == 2) {
+              if (parseInt(x.innerHTML) < parseInt(y.innerHTML)) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                console.log("not else");
+                break;
+              }
+            } else {
+              console.log("else");
+              if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                //if so, mark as a switch and break the loop:
+                shouldSwitch = true;
+                break;
+              }
             }
           } else {
-            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-              //if so, mark as a switch and break the loop:
-              shouldSwitch = true;
-              break;
+            if (column.dataset.id == 0 || column.dataset.id == 2) {
+              if (parseInt(x.innerHTML) > parseInt(y.innerHTML)) {
+                shouldSwitch = true;
+                break;
+              }
+            } else {
+              if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                shouldSwitch = true;
+                break;
+              }
             }
           }
         }
         if (shouldSwitch) {
-          /*If a switch has been marked, make the switch
-          and mark that a switch has been done:*/
           rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
           switching = true;
         }
+      }
+      if (isSorted === "true") {
+        column.dataset.sorted = "false";
+      } else {
+        column.dataset.sorted = "true";
       }
     }
   </script>

@@ -77,7 +77,6 @@ function PaginationButton(page) {
 
   button.addEventListener("click", function () {
     let current_btn = document.querySelectorAll(".pagenumbers button");
-    console.log(current_btn);
     for (let index = 0; index < current_btn.length; index++) {
       current_btn[index].classList.remove("active");
     }

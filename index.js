@@ -7,8 +7,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "/views"));
 app.get("/", async (req, res, next) => {
   const data = fs.readFile("generated.json", "utf8", function (err, data) {
     if (err) {
